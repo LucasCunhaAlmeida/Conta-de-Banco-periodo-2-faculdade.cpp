@@ -13,14 +13,14 @@
 using namespace std;
 
 
-default_random_engine generator(time(0));  // "Semente" para o GerarNumeroConta()
+default_random_engine generator(time(0));  // "Semente dos segundos do computador" para o GerarNumeroConta()
 
 
-conta contAtual;  // Variável Global
+conta contAtual;  // Variável global feita a partir da biblioteca Conta.h
 
 
 //                       Prototipações
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 
 void CriarArqText();
@@ -29,47 +29,47 @@ void MenuPrincipal();
 int TelaEscolhaMenuPrincipal();
 
 
-//------------------------------ Login ------------------------------
+//------------------------------ Logins-----------------------------------
 bool Login();
-void Sacar();   // Sobrecarga #
+void Sacar();   // Sobrecarga @
 void Extrato();
 void MenuLogin();
 void Depositar(); // Sobrecarga @
 void FecharConta();
 bool Transferencia();
-void Sacar(double valor);   // Sobrecarga #
+void Sacar(double valor);  // Sobrecarga @
 void TelaMenuLogin(int &opcao);
-void ImportarDados(string cpf); // (analisar)
+void ImportarDados(string cpf); 
 void Depositar(string nConta, double valor); // Sobrecarga @
 
 
-//------------------------------ Cadastro ---------------------------
+//------------------------------ Cadastros--------------------------------
 void GravarConta();
 
 
-//------------------------------ Conta ------------------------------
+//------------------------------ Conta -----------------------------------
 int GerarNumeroConta();
 string VerificaNConta();
 string VerificaNcontaArq();
 
 
-//------------------------------ Nome -------------------------------
+//------------------------------ Nome ------------------------------------
 string VerificaNomeCadastro();
 
 
-//------------------------------ CPF --------------------------------
+//------------------------------ CPF -------------------------------------
 string VerificaCPFLogin();
 string VerificaCPFCadastro();
 bool verificarCpfNoArquivo(string cpf);
 
 
-//------------------------------ Senha ------------------------------
+//------------------------------ Senha -----------------------------------
 string VerificaSenhaLogin();
 string VerificaSenhaCadastro();
 bool verificarCPFSenha(string cpf, string senha);
 
 
-//---------------------------Gráfica------------------------------------
+//---------------------------Gráficas-------------------------------------
 
 
 void LimparCin();
@@ -83,14 +83,14 @@ void TelaMenuCadastro();
 void MostrarInformacaoCadastro(conta c);
 
 
-//-------------------------Controles------------------------------------
+//-------------------------Controles--------------------------------------
 
 
 int ComandosTecladoMenu(conta contAtual,const char* op[]);
 int ComandosTecladoMenuPrincipal(conta contAtual, const char* op[]);
 
 //                      Main
-//----------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 
 int main(){
@@ -103,14 +103,17 @@ int main(){
 }
 
 
-                    //DEFINIÇÃO DAS FUNÇÕES
-//-----------------------------------------------------------------------------------
+//                     Definições das funções
+//------------------------------------------------------------------------
 
 
-/*Está função vai servir para criar os arquivos que guardam as informações
-das contas dos clientes e criar os arquivos das movimentações que cada cliente fez,
-Sacar, Depositar, transferir.*/
+/* Está função serve para criar os arquivos que guardam as informações
+ * das contas dos clientes e criar os arquivos das movimentações (Extrato), 
+ * que cada  cliente fez como Sacar, Depositar e transferir. 
+*/
+
 void CriarArqText(){
+
     fstream arquivo, Extrato;
     arquivo.open("Contas.txt", ios::app); // Abre o arquivo em modo de anexação
     Extrato.open("Extrato.txt", ios::app); // Abre o arquivo em modo de anexação
@@ -126,10 +129,14 @@ void CriarArqText(){
     }
 
     arquivo.close();//Fecha o arquivo das contas
+
 }
 
 
-/*Esta função de fato vai chamar todas as funções necessarias para fazer um cadastro ou login correto*/
+/* Esta função de fato vai controlar as chamadas de todas as funções necessarias
+ * para fazer um cadastro ou login correto. 
+*/
+
 void Controle(int o){
 
     conta c;//Uma variavel do tipo conta é criada
@@ -187,8 +194,11 @@ void Controle(int o){
 }
 
 
-/*Está função foi feita pois para cadastrar ou fazer login existe uma serie de verificações a serem feitas,
-isso deixa o código mais organizado e modularizado para futuras alterações*/
+/* Está função serve para pedir a opção desejada do usuário dentro do menu principal, que 
+ * tem as opções de "NOVO CADASTRO", "LOGAR NA CONTA", "SAIR DO APP", assim a função
+ * fica chamando a função Controle para acessar a opção escolhida até que ele deseje sair. 
+*/
+
 void MenuPrincipal(){
 
     int opcao;
@@ -221,29 +231,36 @@ void MenuPrincipal(){
                 Sleep(2000);
         }
     }while(opcao != 2);
+
 }
 
 
-/*Está função serve para o cliente escolher ao entrar no primeiro menu(menu principal)
-o que ele quer fazer, "NOVO CADASTRO", "LOGAR NA CONTA", "SAIR DO APP", retornando para quem chamou o numero
-da opção escolhida, a função que captura a opção escolhida é a ComandosTecladoMenuPrincipal*/
+/* Está função serve para o cliente escolher ao entrar no menu principal o que ele quer fazer,
+ * "NOVO CADASTRO", "LOGAR NA CONTA", "SAIR DO APP", retornando para quem chamou o número da
+ * opção escolhida. A função que captura a opção escolhida é a ComandosTecladoMenuPrincipal. 
+*/
+
 int TelaEscolhaMenuPrincipal(){
 
-    int* option = new int;//Para guardar uma dessas opções que estão nesse vetor abaixo
-    const char *opcoes[] = {"NOVO CADASTRO", "LOGAR NA CONTA", "SAIR DO APP"};//Essas são as opções que pode se escolher
+    int* option = new int;//Para guardar uma dessas opções que estão nesse vetor abaixo.
+    const char *opcoes[] = {"NOVO CADASTRO", "LOGAR NA CONTA", "SAIR DO APP"};//Essas são as opções que pode se escolher.
 
     Letreiro();
 
-    // Prestar atenção nisso
-    *option = ComandosTecladoMenuPrincipal(contAtual, opcoes);//Passa o nome das opções para a função e ela devolve a escolhida para "option"
+    *option = ComandosTecladoMenuPrincipal(contAtual, opcoes);//Passa o nome das opções para a função e ela devolve a escolhida para "option".
 
-    return *option;//Retorna para quem chamou o número de uma das 3 opções
+    return *option;//Retorna para quem chamou o número de uma das 3 opções.
 
 }
 
 
+//------------------------------ Login -----------------------------------
 
-//------------------------------ Login ------------------------------
+
+/* Está função serve para pedir ao usuário para digitar a senha da sua conta e o CPF, se faz
+ * isso para verificar no banco de dados (arquivo de texto), se o CPF e a senha já existem
+ * e se são realmente do usuário que digitou as informações.
+*/
 
 bool Login(){
 
@@ -281,7 +298,13 @@ bool Login(){
 }
 
 
-void Sacar(){   // Sobrecarga
+/* Está função serve para sacar um valor da conta atual que está logada no aplicativo (a que está
+ * dentro da variavel global contAtual), pedindo o valor que deseja sacar e subtraindo da variavel 
+ * e de dentro do banco de dados (arquivo de texto), atualizando ele ao final da função e 
+ * registrando essa movimentação no Extrato da conta. 
+*/
+
+void Sacar(){   // Sobrecarga @
 
     ifstream arquivo("Contas.txt");
     fstream Extrato("Extrato.txt");
@@ -310,7 +333,6 @@ void Sacar(){   // Sobrecarga
         while (getline(arquivo, linha)) {
             numeroDaLinhaConta++;
             if (linha == nconta) { // Verifica se a linha corresponde a conta
-                //cout << "A CONTA '" << nconta << "' FOI ENCONTRADO NA LINHA " << numeroDaLinhaConta << endl;
                 linhaSaldo = numeroDaLinhaConta + 2;
             }
             if (numeroDaLinhaConta == linhaSaldo) {
@@ -336,7 +358,7 @@ void Sacar(){   // Sobrecarga
         arquivo.close();
         temp.close();
         remove("Contas.txt"); // Remove o arquivo original
-        rename("temp.txt", "Contas.txt"); // Renomeia o arquivo tempor rio
+        rename("temp.txt", "Contas.txt"); // Renomeia o arquivo temporário
     } else {
         cout << "FALHA AO ACESSAR BANCO DE DADOS!\n";
     }
@@ -346,18 +368,25 @@ void Sacar(){   // Sobrecarga
 
     cout << "\nSAQUE REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
-
     system("cls");
+
 }
 
+
+/* Está função serve para pesquisar todos as movimentações da conta que está logada no aplicativo
+ * (a que está dentro da variavel global contAtual), e colocar todas essas movimentações que estão
+ * guardadas no banco de dados (arquivo de texto), dentro de um vetor dinâmico de strings e depois
+ * imprimindo na tela as movimentações do tipo saque, deposito, transferência.
+*/
 
 void Extrato(){
 
     fstream Extrato("Extrato.txt");
+
     if(Extrato.is_open()){
         int Movi = 0, cont = 1;
         string linha;
-        string *linha_T = new string[1];
+        string *linha_T = new string[1];//Modificar isto 
 
         LimparTelaLogin();
         InformacoesCliente(contAtual);
@@ -392,7 +421,8 @@ void Extrato(){
 
 }
 
-
+/* Parei por aqui 24/04/24
+*/
 void MenuLogin(){ // Menu/Tela Usuario (ajeitar)
 
     int op;
