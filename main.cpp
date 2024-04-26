@@ -76,11 +76,11 @@ void LimparCin();
 void SetColor(int ForgC);
 void Letreiro();
 void LimparTela();
-void InformacoesCliente(conta contAtual);
+void InformacoesCliente();
 void TelaMenuLogin();
 void LimparTelaLogin();
 void TelaMenuCadastro();
-void MostrarInformacaoCadastro(conta c);
+void MostrarInformacaoCadastro();
 
 
 //-------------------------Controles------------------------------------
@@ -111,6 +111,7 @@ int main(){
 das contas dos clientes e criar os arquivos das movimentações que cada cliente fez,
 Sacar, Depositar, transferir.*/
 void CriarArqText(){
+    
     fstream arquivo, Extrato;
     arquivo.open("Contas.txt", ios::app); // Abre o arquivo em modo de anexação
     Extrato.open("Extrato.txt", ios::app); // Abre o arquivo em modo de anexação
@@ -132,32 +133,26 @@ void CriarArqText(){
 /*Esta função de fato vai chamar todas as funções necessarias para fazer um cadastro ou login correto*/
 void Controle(int o){
 
-    conta c;//Uma variavel do tipo conta é criada
-
     switch(o){
+
         /*A variavel "o" foi mandada pela função MenuPrincipal apartir de uma das 3 opções
          que ele pode escolher da função TelaEscolhaMenuPrincipal, "NOVO CADASTRO", "LOGAR NA CONTA", "SAIR DO APP"*/
+
         case 0: // Cadastro
 
             TelaMenuCadastro();
 
-            c.nome = VerificaNomeCadastro();//A conta local recebe o nome do cliente
-            contAtual.nome = c.nome;//A conta global recebe o nome da conta local
+            contAtual.nome = VerificaNomeCadastro();
+            
+            contAtual.cpf = VerificaCPFCadastro();
 
-            c.cpf = VerificaCPFCadastro();//A conta local recebe o CPF do cliente
-            contAtual.cpf = c.cpf;//A conta global recebe o CPF da conta local
+            contAtual.senha  = VerificaSenhaCadastro();
 
-            c.senha = VerificaSenhaCadastro();
-            contAtual.senha = c.senha;
-
-            c.nConta = GerarNumeroConta();
-            contAtual.nConta = c.nConta;
-
-            contAtual.saldo = c.saldo;
+            contAtual.nConta = GerarNumeroConta();
 
             GravarConta(); // GravarConta() serve para gravar os dados de cadastro aprovados no arquivo.
 
-            MostrarInformacaoCadastro(contAtual); // mostrarInformacao() serve para mostrar os dados da conta recem cadastrada na tela.
+            MostrarInformacaoCadastro(); // mostrarInformacao() serve para mostrar os dados da conta recem cadastrada na tela.
 
             LimparTela();
 
@@ -251,17 +246,15 @@ bool Login(){
     bool correto;
 
     do{
+
         cpf = VerificaCPFLogin();
-        contAtual.cpf = cpf;
 
         senha = VerificaSenhaLogin();
-        contAtual.senha = senha;
 
-        if(verificarCPFSenha(cpf,senha)){
+        if (verificarCPFSenha(cpf,senha)) {
             correto = true;
             ImportarDados(cpf);
-        }
-        else{
+        } else {
             correto = false;
 
             cout<<"\nSENHA INCORRETA!"<<endl;
@@ -269,6 +262,7 @@ bool Login(){
             LimparTela();
             TelaMenuLogin();
         }
+
     }while(!correto);
 
 
@@ -295,7 +289,7 @@ void Sacar(){   // Sobrecarga
 
     do{
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout<<"\nDESEJA SACAR QUAL VALOR? R$ ";
         cin>>valorSaque;
@@ -342,7 +336,7 @@ void Sacar(){   // Sobrecarga
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nSAQUE REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -360,7 +354,7 @@ void Extrato(){
         string *linha_T = new string[1];
 
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout << "\nEXTRATO - CONTA: " << contAtual.nConta << "\n" << endl;
 
@@ -418,7 +412,7 @@ void MenuLogin(){ // Menu/Tela Usuario (ajeitar)
                 break;
             case 5:
                 LimparTelaLogin();
-                InformacoesCliente(contAtual);
+                InformacoesCliente();
                 cout << "\nVOLTANDO PARA O MENU PRINCIPAL" << endl;
                 Sleep(2000);
                 system("cls");
@@ -442,7 +436,7 @@ void Depositar(){   // Sobrecarga
 
     do{
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout <<"\nDIGITE O VALOR QUE DESEJA DEPOSITAR: R$ ";
         cin >> valorDeposito;
@@ -489,7 +483,7 @@ void Depositar(){   // Sobrecarga
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nDEPOSITO REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -538,7 +532,7 @@ void FecharConta(){
 
         if(tecla != 13){
             system("cls");
-            InformacoesCliente(contAtual);
+            InformacoesCliente();
             cout <<endl<< "DESEJA REALMENTE CANCELAR A SUA CONTA?: "<<endl;
         }
 
@@ -596,6 +590,7 @@ void FecharConta(){
 
 
 bool Transferencia(){
+
     fstream Extrato("Extrato.txt");
     string nContaDepositar = VerificaNcontaArq();
 
@@ -608,7 +603,7 @@ bool Transferencia(){
     do{
 
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout<<endl<<"DESEJA TRANSFERIR QUAL VALOR? R$ ";
         cin>>valor;
@@ -642,7 +637,7 @@ bool Transferencia(){
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     system("cls");
 }
@@ -684,7 +679,7 @@ void Sacar(double valor){   // Sobrecarga
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nSAQUE REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -712,7 +707,6 @@ void ImportarDados(string cpf){
     int aux2;
     double aux3;
 
-    //cout<<"Entrou no Importar Dados"<<endl;
     if(arquivo.is_open()) {
         while (getline(arquivo, linha)) {
             numeroDaLinha++;
@@ -802,7 +796,7 @@ void Depositar(string nConta, double valor){    // Esta função está em sobrec
         Sleep(2000);
     }
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nDEPOSITO REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -872,7 +866,7 @@ string VerificaNConta(){
     while(!certo){
 
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout<<"DIGITE O NUMERO DA CONTA PARA A QUAL DESEJA TRANSFERIR: ";
         getline(cin, nConta);
@@ -940,7 +934,7 @@ se sim, retorna true ou se nao existir ou existir e ele desistir retorna false*/
         while (getline(arquivo, linha)){
 
             LimparTelaLogin();
-            InformacoesCliente(contAtual);
+            InformacoesCliente();
 
             numeroDaLinhaConta++;
             if(numeroDaLinhaNome == numeroDaLinhaConta){
@@ -976,7 +970,7 @@ se sim, retorna true ou se nao existir ou existir e ele desistir retorna false*/
 
                     if(tecla != 13){
                         system("cls");
-                        InformacoesCliente(contAtual);
+                        InformacoesCliente();
                         cout<<endl<<"DADOS DA CONTA QUE VOCE DESEJA TRANSFERIR\n"<<endl;
                         cout<<"NOME: "<<linha<<endl
                         <<"NUMERO DA CONTA: "<<auxConta<<endl;//Talvez implementar a conio
@@ -1252,14 +1246,11 @@ string VerificaSenhaCadastro(){
 
 bool verificarCPFSenha(string cpf, string senha) {
 
-
     ifstream arquivo("Contas.txt");
     string linha;
-    int numeroDaLinha = 0;
 
     if(arquivo.is_open()) {
         while(getline(arquivo, linha)) {
-            numeroDaLinha++;
             if(linha == cpf) { // Verifica se a linha corresponde ao cpf
                 for(int c = 0;c < 2;c++){
                     getline(arquivo, linha);
@@ -1276,6 +1267,7 @@ bool verificarCPFSenha(string cpf, string senha) {
         cout << "Falha ao abrir banco de dados\n";
     }
     return false;
+
 }
 
 
@@ -1328,13 +1320,15 @@ void LimparTela(){
 }
 
 
-void InformacoesCliente(conta contAtual){
+void InformacoesCliente(){
+
     cout << "------------------------------------------------------------\n" << endl
          << "BEM-VINDO(A), " << contAtual.nome << "\n" << endl
          << "AGENCIA: " << contAtual.agencia << endl
          << "CONTA: " << contAtual.nConta << endl
          << "SALDO: R$" << contAtual.saldo << "\n" << endl
          << "------------------------------------------------------------\n" << endl;
+
 }
 
 
@@ -1348,7 +1342,6 @@ void TelaMenuLogin(){   // Sobrecarga
 void LimparTelaLogin(){
     system("cls");
     Letreiro();
-    //InformacoesCliente();
 }
 
 
@@ -1359,7 +1352,7 @@ void TelaMenuCadastro(){
 }
 
 
-void MostrarInformacaoCadastro(conta c){
+void MostrarInformacaoCadastro(){
 
     cout << "\nCONTA APROVADA!" << endl;
 
@@ -1369,11 +1362,12 @@ void MostrarInformacaoCadastro(conta c){
     cout << "CONTA APROVADA!" << endl;
 
     cout << "-------------------- INFORMACOES DO USUARIO --------------------" << endl
-         << "NOME: " << c.nome << endl
-         << "CPF: " << c.cpf << endl
+         << "NOME: " << contAtual.nome << endl
+         << "CPF: " << contAtual.cpf << endl
          << "-------------------- INFORMACOES DA CONTA   --------------------" << endl
-         << "AGENCIA: " << c.agencia << endl
-         << "CONTA: " << c.nConta << endl;
+         << "AGENCIA: " << contAtual.agencia << endl
+         << "CONTA: " << contAtual.nConta << endl;
+
 }
 
 
@@ -1383,13 +1377,13 @@ void MostrarInformacaoCadastro(conta c){
 int ComandosTecladoMenu(conta contAtual, const char* op[]){
         int x = 0, tecla = 13;
 
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         do{
             if(tecla != 13){
                 system("cls");
                 Letreiro();
-                InformacoesCliente(contAtual);
+                InformacoesCliente();
             }
             for(int i = 0; i < 6; i++) {
 
