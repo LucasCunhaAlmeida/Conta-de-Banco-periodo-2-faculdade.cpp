@@ -79,17 +79,17 @@ void LimparCin();
 void SetColor(int ForgC);
 void Letreiro();
 void LimparTela();
-void InformacoesCliente(conta contAtual);
+void InformacoesCliente();
 void TelaMenuLogin();
 void LimparTelaLogin();
 void TelaMenuCadastro();
-void MostrarInformacaoCadastro(conta c);
+void MostrarInformacaoCadastro();
 
 
 //-------------------------Controles--------------------------------------
 
-int ComandosTecladoMenu(conta contAtual,const char* op[]);
-int ComandosTecladoMenuPrincipal(conta contAtual, const char* op[]);
+int ComandosTecladoMenu(const char* op[]);
+int ComandosTecladoMenuPrincipal( const char* op[]);
 
 
 //                      Main
@@ -153,23 +153,19 @@ void Controle(int o) {
 
             TelaMenuCadastro();
 
-            c.nome = VerificaNomeCadastro();// A conta local recebe o nome do cliente.
-            contAtual.nome = c.nome;// A conta global recebe o nome da conta local.
+            contAtual.nome = VerificaNomeCadastro();// A conta global recebe o nome do cliente.
 
-            c.cpf = VerificaCPFCadastro();// A conta local recebe o CPF do cliente.
-            contAtual.cpf = c.cpf;// A conta global recebe o CPF da conta local.
+            contAtual.cpf = VerificaCPFCadastro();// A conta global recebe o CPF do cliente.
 
-            c.senha = VerificaSenhaCadastro();
-            contAtual.senha = c.senha;
+            contAtual.senha = VerificaSenhaCadastro();
 
-            c.nConta = GerarNumeroConta();
-            contAtual.nConta = c.nConta;
+            contAtual.nConta = GerarNumeroConta();
 
             contAtual.saldo = c.saldo;
 
             GravarConta(); // GravarConta() serve para gravar os dados de cadastro aprovados no arquivo.
 
-            MostrarInformacaoCadastro(contAtual);
+            MostrarInformacaoCadastro();
 
             LimparTela();
 
@@ -189,7 +185,7 @@ void Controle(int o) {
                 } else {
                     cout<<"\nLOGOU COM SUCESSO!"<<endl;
                 }
-            }while(!prossiga);
+            } while (!prossiga);
 
             Sleep(2000);
             system("cls");
@@ -255,7 +251,7 @@ int TelaEscolhaMenuPrincipal() {
     Letreiro();
 
     // Passa o nome das opções para a função e ela devolve a escolhida para "option".
-    *option = ComandosTecladoMenuPrincipal(contAtual, opcoes);
+    *option = ComandosTecladoMenuPrincipal(opcoes);
 
     return *option;// Retorna para quem chamou o número de uma das 3 opções.
 
@@ -323,7 +319,7 @@ void Sacar() {   // Sobrecarga @
 
     do {
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout<<"\nDESEJA SACAR QUAL VALOR? R$ ";
         cin>>valorSaque;
@@ -376,7 +372,7 @@ void Sacar() {   // Sobrecarga @
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nSAQUE REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -394,21 +390,21 @@ void Extrato() {
 
     fstream Extrato("Extrato.txt");
 
-    if(Extrato.is_open()){
+    if (Extrato.is_open()){
         int Movi = 0, cont = 1;
         string linha;
-        string *linha_T = new string[1];
+        string *linha_T = new string;
 
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout << "\nEXTRATO - CONTA: " << contAtual.nConta << "\n" << endl;
 
-        while(getline(Extrato, linha)){
+        while (getline(Extrato, linha)) {
             string numerosLidos = linha.substr(0, 6); // Pega os 6 primeiros digitos.
 
             int numerosLido = stoi(numerosLidos); // Transforma os digitos em inteiro.
-            if(numerosLido == contAtual.nConta){ // Compara eles com o Numero da conta Atual.
+            if (numerosLido == contAtual.nConta) { // Compara eles com o Numero da conta Atual.
                 Movi = 1;
                 *linha_T = linha.substr(0);
                 //Só para ficar mais organizado na hora de imprimir.
@@ -418,12 +414,12 @@ void Extrato() {
                 linha_T = new string[cont];
             }
         }
-        if(Movi != 1){
+        if (Movi != 1) {
             cout << "\nNAO HOUVE MOVIMENTACAO NESSA CONTA"<< endl;
             Sleep(2000);
         }
-    Extrato.close();
-    }else{
+        Extrato.close();
+    } else {
         cout << "\nERRO AO ABRIR O ARQUIVO" <<endl;
         Sleep(2000);
     }
@@ -463,7 +459,7 @@ void MenuLogin() {
                 break;
             case 5:
                 LimparTelaLogin();
-                InformacoesCliente(contAtual);
+                InformacoesCliente();
                 cout << "\nVOLTANDO PARA O MENU PRINCIPAL" << endl;
                 Sleep(2000);
                 system("cls");
@@ -492,7 +488,7 @@ void Depositar() {  // Sobrecarga @
 
     do {
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout << "\nDIGITE O VALOR QUE DESEJA DEPOSITAR: R$ ";
         cin >> valorDeposito;
@@ -546,7 +542,7 @@ void Depositar() {  // Sobrecarga @
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nDEPOSITO REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -600,7 +596,7 @@ void FecharConta() {
 
         if(tecla != 13){
             system("cls");
-            InformacoesCliente(contAtual);
+            InformacoesCliente();
             cout <<endl<< "DESEJA REALMENTE CANCELAR A SUA CONTA?: "<<endl;
         }
 
@@ -691,7 +687,7 @@ bool Transferencia() {
     do {
 
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout<<endl<<"DESEJA TRANSFERIR QUAL VALOR? R$ ";
         cin>>valor;
@@ -726,11 +722,16 @@ bool Transferencia() {
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
     system("cls");
 
 }
 
+
+/* Está função faz basicamente a mesma coisa da sacar() sem parâmetros,
+ * só que em vez de sacar pedindo o valor dentro da função, aqui
+ * passamos o valor como parâmetro. Está função serve como auxiliar
+ * para a função Transferencia().*/
 
 void Sacar(double valor){   // Sobrecarga @
 
@@ -767,7 +768,7 @@ void Sacar(double valor){   // Sobrecarga @
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     cout << "\nSAQUE REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
@@ -785,7 +786,7 @@ void TelaMenuLogin(int &opcao) {
 
     Letreiro();
 
-    opcao = ComandosTecladoMenu(contAtual, opcoes);
+    opcao = ComandosTecladoMenu(opcoes);
 
 }
 
@@ -910,7 +911,7 @@ void Depositar(string nConta, double valor) { //Sobrecarga @
     }
 
     LimparTelaLogin();
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
     cout << "\nDEPOSITO REALIZADO COM SUCESSO!" << endl;
     Sleep(2000);
 
@@ -997,7 +998,7 @@ string VerificaNConta() {
     while (!certo) {
 
         LimparTelaLogin();
-        InformacoesCliente(contAtual);
+        InformacoesCliente();
 
         cout<<"DIGITE O NUMERO DA CONTA PARA A QUAL DESEJA TRANSFERIR: ";
         getline(cin, nConta);
@@ -1074,7 +1075,7 @@ string VerificaNcontaArq() {
         while (getline(arquivo, linha)) {
 
             LimparTelaLogin();
-            InformacoesCliente(contAtual);
+            InformacoesCliente();
             numeroDaLinhaConta++;
 
             if (numeroDaLinhaNome == numeroDaLinhaConta) {
@@ -1113,7 +1114,7 @@ string VerificaNcontaArq() {
 
                     if (tecla != 13) {
                         system("cls");
-                        InformacoesCliente(contAtual);
+                        InformacoesCliente();
 
                         cout<<endl<<"DADOS DA CONTA QUE VOCE DESEJA TRANSFERIR\n"<<endl;
                         cout<<"NOME: "<<linha<<endl
@@ -1510,7 +1511,7 @@ void LimparTela() {
 
 /* Vai servir para colocar as informações da "contAtual" na tela. */
 
-void InformacoesCliente(conta contAtual) {
+void InformacoesCliente() {
 
     cout << "------------------------------------------------------------\n" << endl
          << "BEM-VINDO(A), " << contAtual.nome << "\n" << endl
@@ -1558,7 +1559,7 @@ void TelaMenuCadastro() {
  * todas as informações da nova conta na tela, pois a mesma está
  * na variável global "contAtual".*/
 
-void MostrarInformacaoCadastro(conta c) {
+void MostrarInformacaoCadastro() {
 
     cout << "\nCONTA APROVADA!" << endl;
 
@@ -1568,11 +1569,12 @@ void MostrarInformacaoCadastro(conta c) {
     cout << "CONTA APROVADA!" << endl;
 
     cout << "-------------------- INFORMACOES DO USUARIO --------------------" << endl
-         << "NOME: " << c.nome << endl
-         << "CPF: " << c.cpf << endl
+         << "NOME: " << contAtual.nome << endl
+         << "CPF: " << contAtual.cpf << endl
          << "-------------------- INFORMACOES DA CONTA   --------------------" << endl
-         << "AGENCIA: " << c.agencia << endl
-         << "CONTA: " << c.nConta << endl;
+         << "AGENCIA: " << contAtual.agencia << endl
+         << "CONTA: " << contAtual.nConta << endl;
+
 }
 
 
@@ -1584,18 +1586,18 @@ void MostrarInformacaoCadastro(conta c) {
  * cima e para baixo do teclado, até que clique no enter e escolha alguma
  * opção e assim retorne essa opção para quem chamou.*/
 
-int ComandosTecladoMenu(conta contAtual, const char* op[]) {
+int ComandosTecladoMenu(const char* op[]) {
 
     int x = 0, tecla = 13;
 
-    InformacoesCliente(contAtual);
+    InformacoesCliente();
 
     do {
 
         if (tecla != 13) {
             system("cls");
             Letreiro();
-            InformacoesCliente(contAtual);
+            InformacoesCliente();
         }
 
         for (int i = 0; i < 6; i++) {
@@ -1629,7 +1631,7 @@ int ComandosTecladoMenu(conta contAtual, const char* op[]) {
  * imprimindo essas opçoes junto com a função Letreiro, ate o cliente escolher uma opção
  * valida pressionando o enter (13 na tabela ASCII). */
 
-int ComandosTecladoMenuPrincipal(conta contAtual, const char* op[]) {
+int ComandosTecladoMenuPrincipal(const char* op[]) {
         
     int opcao = 0,  tecla = 13; 
 
